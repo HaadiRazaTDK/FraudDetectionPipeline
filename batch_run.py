@@ -1,11 +1,11 @@
 import json
-import os
 import subprocess
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 CONFIG_PATH = ROOT / "src" / "cfg" / "config.json"
+REPOS_PATH = ROOT / "repos.json"
 
 
 def load_config():
@@ -14,6 +14,10 @@ def load_config():
 
 
 def run_for_repo(repo_url, branch, start_date, end_date, commits="1"):
+    if "yourname" in repo_url:
+        print(f"Skipping placeholder repo: {repo_url}")
+        return
+
     config = load_config()
     config["repository"] = repo_url
     config["branch"] = branch
@@ -25,33 +29,18 @@ def run_for_repo(repo_url, branch, start_date, end_date, commits="1"):
         json.dump(config, handle, indent=2)
 
     print(f"Running for {repo_url} on branch {branch} from {start_date} to {end_date}")
-    subprocess.run([sys.executable, str(ROOT / "main.py")], cwd=ROOT, input=f"{repo_url}\n{branch}\n{commits}\npy\n{start_date}\n{end_date}\n", text=True, check=False)
+    subprocess.run(
+        [sys.executable, str(ROOT / "main.py")],
+        cwd=ROOT,
+        input=f"{repo_url}\n{branch}\n{commits}\npy\n{start_date}\n{end_date}\n",
+        text=True,
+        check=False,
+    )
 
 
 def main():
-    repos = [
-        {
-            "url": "https://github.com/yourname/data-science-eda.git",
-            "branch": "main",
-            "start": "2023,01,01",
-            "end": "2024,01,01",
-            "commits": "2",
-        },
-        {
-            "url": "https://github.com/yourname/ml-pipeline-project.git",
-            "branch": "main",
-            "start": "2024,01,01",
-            "end": "2025,01,01",
-            "commits": "3",
-        },
-        {
-            "url": "https://github.com/HaadiRazaTDK/BankNote_Authentication_App_with_Dockers.git",
-            "branch": "main",
-            "start": "2025,01,01",
-            "end": "2026,07,01",
-            "commits": "1",
-        },
-    ]
+    with open(REPOS_PATH, "r", encoding="utf-8") as handle:
+        repos = json.load(handle)
 
     for repo in repos:
         run_for_repo(

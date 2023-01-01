@@ -1,0 +1,44 @@
+[
+  {
+    "url": "https://github.com/HaadiRazaTDK/Student360.git",
+    "branch": "main",
+    "start": "2023,01,01",
+    "end": "2026,07,01",
+    "commits": "1"
+  },
+  {
+    "url": "https://github.com/HaadiRazaTDK/BankNote_Authentication_App_with_Dockers.git",
+    "branch": "main",
+    "start": "2023,01,01",
+    "end": "2026,07,01",
+    "commits": "1"
+  },
+  {
+    "url": "https://github.com/HaadiRazaTDK/FraudDetectionPipeline.git",
+    "branch": "main",
+    "start": "2023,01,01",
+    "end": "2026,07,01",
+    "commits": "1"
+  },
+  {
+    "url": "https://github.com/yourname/data-science-eda.git",
+    "branch": "main",
+    "start": "2023,01,01",
+    "end": "2026,07,01",
+    "commits": "1"
+  },
+  {
+    "url": "https://github.com/yourname/ml-pipeline-project.git",
+    "branch": "main",
+    "start": "2023,01,01",
+    "end": "2026,07,01",
+    "commits": "1"
+  },
+  {
+    "url": "https://github.com/yourname/time-series-forecast.git",
+    "branch": "main",
+    "start": "2023,01,01",
+    "end": "2026,07,01",
+    "commits": "1"
+  }
+]
