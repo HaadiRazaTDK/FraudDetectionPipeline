@@ -1,3 +1,29 @@
-Commitify V1.0.0
-GITHUB: https://github.com/liamarguedas/Commitify
+import pandas as pd
+import numpy as np
+from pathlib import Path
+
+
+def load_dataset(path: str) -> pd.DataFrame:
+    return pd.read_csv(path)
+
+
+def clean_data(df: pd.DataFrame) -> pd.DataFrame:
+    cleaned = df.copy()
+    cleaned = cleaned.fillna(cleaned.median(numeric_only=True))
+    return cleaned
+
+
+def summarize(df: pd.DataFrame) -> dict:
+    return {
+        "rows": int(df.shape[0]),
+        "columns": int(df.shape[1]),
+        "missing_values": int(df.isna().sum().sum()),
+    }
+
+
+if __name__ == "__main__":
+    data_path = Path("data/raw.csv")
+    df = load_dataset(data_path)
+    cleaned_df = clean_data(df)
+    print(summarize(cleaned_df))
 

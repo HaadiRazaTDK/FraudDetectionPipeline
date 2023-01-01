@@ -1,9 +1,14 @@
 {
   "comments": [
-    "Add( Arg prefix to error message )",
-    "Add( Necessary requirements to use coverage )",
-    "Add( Initial working version )",
-    "Remove( Old build files )",
-    "Update( README.md )"
+    "Add( exploratory data analysis pipeline )",
+    "Add( data cleaning and preprocessing utilities )",
+    "Add( feature engineering notebook )",
+    "Tune( model hyperparameters for regression )",
+    "Add( training script for classification model )",
+    "Improve( model evaluation metrics )",
+    "Refactor( data ingest workflow )",
+    "Update( README.md with project overview )",
+    "Add( requirements for pandas and scikit-learn )",
+    "Fix( missing value handling in feature matrix )"
   ]
 }
