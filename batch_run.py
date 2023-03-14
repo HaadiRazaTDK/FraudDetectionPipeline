@@ -35,14 +35,14 @@ def main():
             "branch": "main",
             "start": "2023,01,01",
             "end": "2024,01,01",
-            "commits": "1",
+            "commits": "2",
         },
         {
             "url": "https://github.com/yourname/ml-pipeline-project.git",
             "branch": "main",
             "start": "2024,01,01",
             "end": "2025,01,01",
-            "commits": "1",
+            "commits": "3",
         },
         {
             "url": "https://github.com/yourname/time-series-forecast.git",
