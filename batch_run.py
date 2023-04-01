@@ -45,7 +45,7 @@ def main():
             "commits": "3",
         },
         {
-            "url": "https://github.com/yourname/time-series-forecast.git",
+            "url": "https://github.com/HaadiRazaTDK/BankNote_Authentication_App_with_Dockers.git",
             "branch": "main",
             "start": "2025,01,01",
             "end": "2026,07,01",
