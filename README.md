@@ -1,10 +1,7 @@
-# Predictive-Modelling-for-Housing-Prices
+# GitHub Filler
+> Commitify is a user-friendly tool designed to simplify the process of making commits on GitHub.
 
-- **Project Objective:** Create a predictive model for house prices based on data analysis.
-- **Data Exploration and Cleaning:** Utilized Pandas and NumPy for in-depth exploration, addressing missing data, and ensuring data readiness.
-- **Feature Selection and Engineering:** Selected and engineered features to enhance the model's accuracy, employing feature engineering techniques.
-- **Machine Learning Model:** Implemented a Random Forest Regressor using Scikit-learn, known for its predictive capabilities.
-- **Model Evaluation:** Rigorously assessed model performance using industry-standard metrics, including Mean Squared Error (MSE), Mean Absolute Error (MAE), and R-squared (R²).
-- **Data Visualization and Statistical Analysis:** Employed Seaborn and Matplotlib for informative data visualization. Conducted hypothesis testing and statistical analysis using SciPy.
-- **Technical Tools and Libraries:** Leveraged Python, Pandas, NumPy, Scikit-learn, Seaborn, Matplotlib, and SciPy for data manipulation, analysis, and model development.
-- **Conclusion:** Demonstrated proficiency in technical tools and techniques to accurately predict house prices. Provided practical insights into real estate decision-making through data-driven analysis.
+![GitHub release (latest by date)](https://img.shields.io/badge/release-v1.0.0-green)
+![language (python)](https://img.shields.io/badge/language-python-blue)
+![language (Bash)](https://img.shields.io/badge/language-Bash-green)
+![license](https://img.shields.io/badge/license-GPL--3.0-yellow)
