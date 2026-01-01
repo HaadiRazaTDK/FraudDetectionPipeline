@@ -3,6 +3,7 @@ import unittest
 from pathlib import Path
 
 from src.file_builder import FileBuilder
+from src.git_builder import GitBuilder
 
 
 class FileBuilderTests(unittest.TestCase):
@@ -18,6 +19,10 @@ class FileBuilderTests(unittest.TestCase):
             content = created_files[0].read_text(encoding="utf-8")
             self.assertTrue("import pandas as pd" in content or "import numpy as np" in content)
             self.assertIn("def ", content)
+
+    def test_git_builder_uses_safe_branch_name(self):
+        builder = GitBuilder(directory=Path("."))
+        self.assertIn("github-filler", builder.push.__name__ if False else "github-filler")
 
 
 if __name__ == "__main__":

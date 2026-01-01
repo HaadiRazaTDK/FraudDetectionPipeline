@@ -25,6 +25,8 @@ import json
 from .comment_builder import CommentBuilder
 from .file_builder import FileBuilder
 
+SAFE_BRANCH_PREFIX = "github-filler"
+
 BLANK = ""
 CONFIG = "config.json"
 
@@ -86,7 +88,8 @@ class GitBuilder:
 
     def push(self):
         """todo"""
-        command = f"git push origin {self.branch}"
+        safe_branch = f"{SAFE_BRANCH_PREFIX}-{self.branch}"
+        command = f"git push origin HEAD:{safe_branch}"
         os.system(command)
 
     def execute(self, date: str, push=True):
