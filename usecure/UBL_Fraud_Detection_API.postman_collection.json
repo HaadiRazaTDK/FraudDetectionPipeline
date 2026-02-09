@@ -1,0 +1,108 @@
+{
+  "info": {
+    "name": "UBL Fraud Detection API",
+    "description": "API endpoints for UBL Fraud Detection System",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/",
+          "host": ["{{base_url}}"],
+          "path": [""]
+        },
+        "description": "Check if the API is running"
+      }
+    },
+    {
+      "name": "Generate Rules",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": "sample_transactions.csv",
+              "description": "Transaction data CSV file"
+            },
+            {
+              "key": "input_date",
+              "value": "31/12/2023",
+              "type": "text",
+              "description": "Reference date in DD/MM/YYYY format"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/generate-rules",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "generate-rules"]
+        },
+        "description": "Generate fraud detection rules from historical data"
+      }
+    },
+    {
+      "name": "List Rules",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/rules/list",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "rules", "list"]
+        },
+        "description": "List all available rules files"
+      }
+    },
+    {
+      "name": "Detect Fraud",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": "sample_transactions.csv",
+              "description": "Transaction data CSV file"
+            },
+            {
+              "key": "detection_date",
+              "value": "01/01/2024",
+              "type": "text",
+              "description": "Date to detect fraud (DD/MM/YYYY)"
+            },
+            {
+              "key": "rules_date",
+              "value": "31/12/2023",
+              "type": "text",
+              "description": "Date of rules file to use (DD/MM/YYYY)"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/detect-fraud",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "detect-fraud"]
+        },
+        "description": "Detect fraud in transactions using pre-generated rules"
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    }
+  ]
+}
