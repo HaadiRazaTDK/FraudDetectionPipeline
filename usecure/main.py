@@ -1,5 +1,7 @@
 """
 FastAPI Fraud Detection System for United Bank Limited
+Supports CSV and Excel (.xlsx) file formats
+Currency: PKR (Pakistani Rupees)
 """
 from fastapi import FastAPI, File, UploadFile, Form, HTTPException
 from fastapi.responses import FileResponse
@@ -10,14 +12,47 @@ from typing import List, Dict
 import os
 import logging
 from pathlib import Path
+from io import BytesIO
 
 from fraud_rules_generator import FraudRulesGenerator
 from fraud_detector import FraudDetector
+from dashboard_generator import DashboardGenerator
 from config import MICROFINANCE_TRANSACTION_CODES, RULES_DIR, OUTPUT_DIR
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+
+# Helper function to read both CSV and Excel files
+def read_file(file_object) -> pd.DataFrame:
+    """
+    Read CSV or Excel file from upload
+    
+    Args:
+        file_object: File-like object from FastAPI upload
+        
+    Returns:
+        DataFrame with the file contents
+    """
+    # Read the file content
+    content = file_object.read()
+    file_object.seek(0)  # Reset position for potential re-reads
+    
+    try:
+        # Try Excel first (.xlsx)
+        df = pd.read_excel(BytesIO(content))
+        logger.info("File read as Excel format")
+        return df
+    except Exception as excel_error:
+        try:
+            # Fall back to CSV
+            df = pd.read_csv(BytesIO(content))
+            logger.info("File read as CSV format")
+            return df
+        except Exception as csv_error:
+            logger.error(f"Failed to read as Excel: {excel_error}, Failed to read as CSV: {csv_error}")
+            raise ValueError("File must be in CSV or Excel (.xlsx) format")
 
 # Create necessary directories
 Path(RULES_DIR).mkdir(parents=True, exist_ok=True)
@@ -45,14 +80,14 @@ async def root():
 
 @app.post("/api/v1/generate-rules")
 async def generate_rules(
-    file: UploadFile = File(..., description="Transaction data CSV file"),
+    file: UploadFile = File(..., description="Transaction data file (CSV or Excel .xlsx)"),
     input_date: str = Form(..., description="Reference date (DD/MM/YYYY) - rules will be generated from 3 months before this date")
 ):
     """
     Generate fraud detection rules for each account based on historical data.
     
     Args:
-        file: CSV file with columns - account_number, transaction_id, transaction_timestamp,
+        file: CSV or Excel file with columns - account_number, transaction_id, transaction_timestamp,
               transaction_amount, cr_dr_ind, New Beneficiary Flag, device_id, transaction_type_code
         input_date: Reference date in DD/MM/YYYY format
         
@@ -71,9 +106,12 @@ async def generate_rules(
                 detail="Invalid date format. Please use DD/MM/YYYY"
             )
         
-        # Read uploaded CSV file
-        df = pd.read_csv(file.file)
-        logger.info(f"Loaded {len(df)} transactions from uploaded file")
+        # Read uploaded file (CSV or Excel)
+        try:
+            df = read_file(file.file)
+            logger.info(f"Loaded {len(df)} transactions from uploaded file")
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
         
         # Validate required columns
         required_columns = [
@@ -121,7 +159,7 @@ async def generate_rules(
 
 @app.post("/api/v1/detect-fraud")
 async def detect_fraud(
-    file: UploadFile = File(..., description="Transaction data CSV file"),
+    file: UploadFile = File(..., description="Transaction data file (CSV or Excel .xlsx)"),
     detection_date: str = Form(..., description="Date to detect fraud (DD/MM/YYYY)"),
     rules_date: str = Form(..., description="Date of rules file to use (DD/MM/YYYY)")
 ):
@@ -129,7 +167,7 @@ async def detect_fraud(
     Detect fraud in transactions for a specific date using pre-generated rules.
     
     Args:
-        file: CSV file with transaction data
+        file: CSV or Excel file with transaction data
         detection_date: Date for which to detect fraud (DD/MM/YYYY)
         rules_date: Date of the rules file to use (DD/MM/YYYY)
         
@@ -163,9 +201,12 @@ async def detect_fraud(
         rules_df = pd.read_csv(rules_path)
         logger.info(f"Loaded rules for {len(rules_df)} accounts")
         
-        # Read transaction data
-        df = pd.read_csv(file.file)
-        logger.info(f"Loaded {len(df)} transactions from uploaded file")
+        # Read transaction data (CSV or Excel)
+        try:
+            df = read_file(file.file)
+            logger.info(f"Loaded {len(df)} transactions from uploaded file")
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
         
         # Validate required columns
         required_columns = [
@@ -244,6 +285,70 @@ async def list_rules():
     except Exception as e:
         logger.error(f"Error listing rules: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error listing rules: {str(e)}")
+
+
+@app.post("/api/v1/dashboard-metrics")
+async def generate_dashboard_metrics(
+    file: UploadFile = File(..., description="Fraud detection results file (CSV or Excel .xlsx)"),
+):
+    """
+    Generate dashboard metrics from fraud detection results.
+    
+    This endpoint processes fraud detection output and generates comprehensive metrics
+    for the fraud monitoring dashboard, including:
+    - Executive summary (fraud count, percentage, total amount in PKR)
+    - Key risk indicators (severity index, accounts requiring action)
+    - Actionable alerts (prioritized accounts for action)
+    - Fraud distribution analysis (by beneficiary type, transaction type)
+    - Top affected accounts (concentration of risk)
+    - Amount distribution (fraud by amount ranges in PKR)
+    - Temporal analysis (patterns by hour/day)
+    - Transaction details (high-risk transactions)
+    
+    Args:
+        file: CSV or Excel file with fraud detection results (output from detect_fraud endpoint)
+        
+    Returns:
+        JSON with comprehensive dashboard metrics organized by category (amounts in PKR)
+    """
+    try:
+        logger.info("Received dashboard metrics generation request")
+        
+        # Read fraud detection results file (CSV or Excel)
+        try:
+            results_df = read_file(file.file)
+            logger.info(f"Loaded {len(results_df)} records from fraud detection results")
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+        
+        # Validate required columns
+        required_columns = ['account_number', 'transaction_id', 'transaction_timestamp', 
+                           'transaction_amount', 'rule_based_fraud_detected', 'rule_based_fraud_score']
+        
+        missing_columns = set(required_columns) - set(results_df.columns)
+        if missing_columns:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Missing required columns in fraud detection results: {missing_columns}"
+            )
+        
+        # Generate dashboard metrics
+        generator = DashboardGenerator(results_df)
+        dashboard_data = generator.generate_dashboard_data()
+        
+        logger.info("Dashboard metrics generated successfully")
+        
+        return {
+            "status": "success",
+            "message": "Dashboard metrics generated successfully (amounts in PKR)",
+            "data": dashboard_data
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error generating dashboard metrics: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Error generating dashboard metrics: {str(e)}")
 
 
 if __name__ == "__main__":

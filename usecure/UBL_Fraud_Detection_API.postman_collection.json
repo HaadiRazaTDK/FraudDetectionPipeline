@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "UBL Fraud Detection API",
-    "description": "API endpoints for UBL Fraud Detection System",
+    "description": "API endpoints for UBL Fraud Detection System - Supports CSV and Excel (.xlsx) files - Currency: PKR",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -30,7 +30,7 @@
               "key": "file",
               "type": "file",
               "src": "sample_transactions.csv",
-              "description": "Transaction data CSV file"
+              "description": "Transaction data file (CSV or Excel .xlsx)"
             },
             {
               "key": "input_date",
@@ -45,7 +45,7 @@
           "host": ["{{base_url}}"],
           "path": ["api", "v1", "generate-rules"]
         },
-        "description": "Generate fraud detection rules from historical data"
+        "description": "Generate fraud detection rules from historical data (supports CSV and Excel files)"
       }
     },
     {
@@ -73,7 +73,7 @@
               "key": "file",
               "type": "file",
               "src": "sample_transactions.csv",
-              "description": "Transaction data CSV file"
+              "description": "Transaction data file (CSV or Excel .xlsx)"
             },
             {
               "key": "detection_date",
@@ -94,7 +94,31 @@
           "host": ["{{base_url}}"],
           "path": ["api", "v1", "detect-fraud"]
         },
-        "description": "Detect fraud in transactions using pre-generated rules"
+        "description": "Detect fraud in transactions using pre-generated rules (supports CSV and Excel files)"
+      }
+    },
+    {
+      "name": "Dashboard Metrics",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": "fraud_detection_results.csv",
+              "description": "Fraud detection results file (CSV or Excel .xlsx, output from detect-fraud endpoint)"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/dashboard-metrics",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "dashboard-metrics"]
+        },
+        "description": "Generate comprehensive dashboard metrics from fraud detection results. Returns summary metrics, key indicators, actionable alerts, fraud distribution, top accounts, amount distribution (PKR), temporal analysis, and transaction details. Supports CSV and Excel files."
       }
     }
   ],
