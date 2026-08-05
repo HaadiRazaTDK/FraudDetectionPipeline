@@ -3,12 +3,21 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+<<<<<<< HEAD
 # C extensions
 *.so
 
 # Distribution / packaging
 .Python
 build/
+=======
+# node_modules
+node_modules
+package-lock.json
+
+# Distribution / packaging
+.Python
+>>>>>>> origin/master
 develop-eggs/
 dist/
 downloads/
@@ -20,8 +29,11 @@ parts/
 sdist/
 var/
 wheels/
+<<<<<<< HEAD
 pip-wheel-metadata/
 share/python-wheels/
+=======
+>>>>>>> origin/master
 *.egg-info/
 .installed.cfg
 *.egg
@@ -30,6 +42,7 @@ MANIFEST
 # PyInstaller
 *.manifest
 *.spec
+<<<<<<< HEAD
 
 # Unit test / coverage reports
 htmlcov/
@@ -73,3 +86,21 @@ results/
 # OS files
 Thumbs.db
 .DS_Store
+=======
+.pypirc
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# pyenv
+.python-version
+
+# node-modules global
+node_modules/
+>>>>>>> origin/master
